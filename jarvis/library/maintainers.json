@@ -1,0 +1,7 @@
+{
+ "threshold": 1,
+ "keys": {
+  "3754a75d5e755915": "eDVBpdmiNM8ki8ifLcY0B7GgXzO6MNf5kW6KWhOJE3Y="
+ },
+ "note": "Закреплённые ключи мейнтейнеров. Основу (core) меняет только манифест с >= threshold подписями."
+}

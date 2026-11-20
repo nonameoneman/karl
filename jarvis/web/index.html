@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Карл — для продвинутых</title>
+<style>
+:root{
+  --bg:#0b0d10;--panel:#12151a;--line:#1f242c;--text:#e6e9ee;--dim:#8a93a0;--accent:#4fc3f7;
+  --green:#3ecf8e;--yellow:#f5c451;--red:#ef5d5d;--user:#1b2430;--radius:10px;
+  font-family:"Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text)}
+body{display:grid;grid-template-columns:1fr 360px;grid-template-rows:56px 1fr;height:100vh}
+header{grid-column:1/3;display:flex;align-items:center;gap:14px;padding:0 18px;border-bottom:1px solid var(--line)}
+header h1{font-size:16px;font-weight:600;letter-spacing:.04em;margin:0}
+.orb{width:14px;height:14px;border-radius:50%;background:#333;transition:.2s}
+.orb.idle{background:var(--accent);opacity:.45}
+.orb.hearing{background:var(--accent);box-shadow:0 0 14px var(--accent)}
+.orb.transcribing{background:var(--yellow)}
+.orb.mic_error{background:var(--red)}
+.orb.need_click{background:#ff9f43;animation:pulse 1s infinite}
+#vstate.need_click{color:#ff9f43;font-weight:600;cursor:pointer}
+.meter{position:relative;width:90px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.meter i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);transition:width .15s}
+.meter b{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--yellow);left:0}
+select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px}
+button.on{border-color:var(--accent);color:var(--accent)}
+.orb.loading{background:var(--dim);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+#vstate{color:var(--dim);font-size:13px}
+header .sp{flex:1}
+button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer}
+button:hover{border-color:#2f3742}
+button.primary{background:var(--accent);color:#04121a;border-color:var(--accent);font-weight:600}
+button.danger{border-color:var(--red);color:var(--red)}
+main{display:flex;flex-direction:column;min-height:0}
+#chat{flex:1;overflow-y:auto;padding:22px 0}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+.msg{margin:10px 0;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.msg.user{background:var(--user);padding:10px 14px;border-radius:var(--radius);margin-left:80px}
+.msg.user .src{color:var(--dim);font-size:12px;margin-right:6px}
+.msg.bot{padding:4px 2px}
+.tool{font:12.5px Consolas,monospace;color:var(--dim);border-left:2px solid var(--line);padding:4px 10px;margin:6px 0}
+.tool b{color:var(--text);font-weight:600}
+.tool .res{max-height:120px;overflow:auto;white-space:pre-wrap;margin-top:4px;display:none}
+.tool.open .res{display:block}
+.tool .r-green{color:var(--green)}.tool .r-yellow{color:var(--yellow)}.tool .r-red{color:var(--red)}
+.card{border:1px solid var(--yellow);border-radius:var(--radius);padding:12px 14px;margin:10px 0;background:#17140b}
+.card.red{border-color:var(--red);background:#1a0e0e}
+.card h4{margin:0 0 6px;font-size:14px}
+.card pre{font:12px Consolas,monospace;color:var(--dim);white-space:pre-wrap;margin:0 0 10px;max-height:220px;overflow:auto}
+.card .btns{display:flex;gap:8px}
+.sys{color:var(--dim);font-size:12.5px;text-align:center;margin:8px 0}
+.overheard{color:#4a525e;font-size:12px;margin:2px 0}
+form{border-top:1px solid var(--line);padding:14px 0}
+form .wrap{display:flex;gap:8px}
+textarea{flex:1;resize:none;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;font:inherit;font-size:14.5px;height:46px;max-height:160px}
+textarea:focus{outline:none;border-color:#2f3742}
+aside{border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;border:0;border-radius:0;background:none;color:var(--dim);padding:12px 4px}
+.tabs select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px}
+button.on{color:var(--text);box-shadow:inset 0 -2px var(--accent)}
+#side{flex:1;overflow-y:auto;padding:12px 14px;font-size:13px}
+.row{padding:7px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:baseline}
+.row .n{font-family:Consolas,monospace}
+.row .d{color:var(--dim);font-size:12px}
+.dot{width:7px;height:7px;border-radius:50%;flex:none;transform:translateY(-1px)}
+.dot.green{background:var(--green)}.dot.yellow{background:var(--yellow)}.dot.red{background:var(--red)}
+h5{margin:14px 0 4px;color:var(--dim);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em}
+.empty{color:var(--dim);padding:10px 0}
+@media (max-width:900px){body{grid-template-columns:1fr}aside{display:none}header{grid-column:1}}
+</style>
+</head>
+<body>
+<header>
+  <div class="orb" id="orb"></div>
+  <h1>КАРЛ</h1>
+  <span id="vstate">—</span>
+  <span class="sp"></span>
+  <div class="meter" title="Уровень микрофона и порог речи"><i id="lvl"></i><b id="thr"></b></div>
+  <button id="bMic" title="Слушать через микрофон браузера">🎙 Микрофон браузера</button>
+  <button id="bVoice" title="Системный микрофон Windows">Системный</button>
+  <button id="bShut" title="Замолчать (Esc)" style="display:none">⏹ Замолчи</button>
+  <select id="sVoice" title="Голос Jarvis">
+    <option value="dmitri">Дмитрий</option><option value="ruslan">Руслан</option>
+    <option value="denis">Денис</option><option value="irina">Ирина</option>
+  </select>
+  <button id="bTts" title="Озвучка">🔊 Голос</button>
+  <button id="bUndo" title="Откатить последние изменения файлов">↩ Верни как было</button>
+  <button id="bReset" title="Новый разговор">Новый разговор</button>
+</header>
+
+<main>
+  <div id="chat"><div class="wrap" id="log">
+    <div class="sys">Скажи «Карл, …» или напиши ниже.</div>
+  </div></div>
+  <form id="f"><div class="wrap">
+    <textarea id="t" placeholder="Например: разложи Загрузки по типам" autofocus></textarea>
+    <button class="primary" id="bSend">Отправить</button>
+    <button type="button" id="bStop" class="danger" style="display:none">Стоп</button>
+  </div></form>
+</main>
+
+<aside>
+  <div class="tabs">
+    <button data-tab="skills" class="on">Навыки</button>
+    <button data-tab="memory">Память</button>
+    <button data-tab="journal">Журнал</button>
+    <button data-tab="git">Обновления</button>
+  </div>
+  <div id="side"></div>
+</aside>
+
+<script>
+const $=s=>document.querySelector(s), log=$('#log'), chat=$('#chat');
+let cur=null, state={}, tab='skills', busy=false;
+const VS={mic_error:'системный микрофон недоступен',off:'микрофон выключен',loading:'загружаю распознавание…',idle:'слушаю «Карл»',hearing:'слышу…',transcribing:'распознаю…'};
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const down=()=>chat.scrollTop=chat.scrollHeight;
+function add(html,cls){const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);down();return d}
+function setBusy(b){busy=b;$('#bStop').style.display=b?'':'none';$('#bSend').disabled=b}
+function argsText(a){try{return JSON.stringify(a,null,1).slice(0,1800)}catch{return String(a)}}
+
+function onEvent(e){
+  switch(e.type){
+    case 'user': add(`<span class="src">${e.source==='voice'?'🎙':''}</span>${esc(e.text)}`,'msg user'); cur=null; setBusy(true); break;
+    case 'token': if(!cur) cur=add('','msg bot'); cur.textContent+=e.text; down(); break;
+    case 'tool_start': {cur=null; const d=add(`<span class="r-${e.risk}">●</span> <b>${esc(e.tool)}</b> ${esc(JSON.stringify(e.args)).slice(0,160)}<div class="res"></div>`,'tool'); d.dataset.tool=e.tool; d.onclick=()=>d.classList.toggle('open'); break;}
+    case 'tool_end': {const ts=[...log.querySelectorAll('.tool')].filter(x=>x.dataset.tool===e.tool); const d=ts[ts.length-1]; if(d){d.querySelector('.res').textContent=e.result; d.insertAdjacentHTML('beforeend',` <span class="d">${e.ok?'':'✗ '}${e.ms??''}${e.ms!=null?' мс':''}</span>`)} break;}
+    case 'confirm': showConfirm(e); break;
+    case 'confirm_done': {const c=document.getElementById('c_'+e.id); if(c){c.querySelector('.btns').innerHTML=e.approved?'<span style="color:var(--green)">✓ разрешено</span>':'<span style="color:var(--red)">✗ отклонено</span>'} break;}
+    case 'final': if(!cur || !cur.textContent.trim()) add(esc(e.text),'msg bot'); else cur.textContent=e.text; cur=null; setBusy(false); refresh(); break;
+    case 'voice_state': setVoice(e.state); break;
+    case 'mic_level': {const k=v=>Math.min(100,Math.sqrt(v/0.15)*100); $('#lvl').style.width=k(e.rms)+'%'; $('#thr').style.left=k(e.thr)+'%'; break;}
+    case 'heard': break;
+    case 'overheard': add((e.during_tts?'🔇 ':'… ')+esc(e.text),'overheard'); break;
+    case 'audio': if(mic&&e.to===audioId)playChunk(e); break;
+    case 'audio_stop': stopAudio(); break;
+    case 'interrupted': stopAudio(); add('✋ перебил: '+esc(e.text),'overheard'); break;
+    case 'reminder': add('⏰ '+esc(e.text),'sys'); break;
+    case 'plan': add(esc(e.text),'card'); break;
+    case 'status': add(esc(e.text),'sys'); break;
+    case 'error': add('⚠ '+esc(e.text),'sys'); break;
+  }
+}
+function showConfirm(e){
+  const d=add(`<h4>${e.risk==='red'?'🔴 Опасное действие':'🟡 Подтверди действие'}: ${esc(e.tool)}</h4>
+    <div class="d" style="color:var(--dim);margin-bottom:6px">${esc(e.description)}</div>
+    <pre>${esc(argsText(e.args))}</pre>
+    <div class="btns"><button class="primary" data-a="1">Разрешить</button>
+    ${e.risk==='yellow'?'<button data-a="2">Всегда разрешать</button>':''}
+    <button data-a="0">Отклонить</button></div>`,'card '+e.risk);
+  d.id='c_'+e.id;
+  d.querySelectorAll('button').forEach(b=>b.onclick=()=>post('/api/confirm',{id:e.id,approved:b.dataset.a!=='0',always:b.dataset.a==='2'}));
+}
+function setVoice(s){state.voice=s;$('#orb').className='orb '+s;$('#vstate').textContent=(VS[s]||s)+(mic&&s!=='off'?' · браузер':'');$('#bVoice').classList.toggle('on',!mic&&!['off','mic_error'].includes(s))}
+async function post(u,b){const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})});return r.json()}
+
+$('#f').onsubmit=async ev=>{ev.preventDefault();const t=$('#t').value.trim();if(!t||busy)return;$('#t').value='';const r=await post('/api/chat',{text:t});if(!r.ok)add('⚠ '+esc(r.error),'sys')};
+$('#t').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();$('#f').requestSubmit()}};
+$('#bStop').onclick=()=>post('/api/stop');
+$('#bShut').onclick=()=>{stopAudio();post('/api/shutup')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){stopAudio();post('/api/shutup')}});
+$('#sVoice').onchange=()=>post('/api/tts',{voice:$('#sVoice').value});
+
+// ── Воспроизведение ответов: в браузере, чтобы эхоподавление вычитало голос Jarvis из микрофона ──
+let outCtx=null, nextT=0, playing=[];
+function ensureOut(){if(!outCtx)outCtx=new (window.AudioContext||window.webkitAudioContext)();if(outCtx.state==='suspended')outCtx.resume();return outCtx}
+function playChunk(e){
+  const ctx=ensureOut(), bin=atob(e.pcm), n=bin.length/2, buf=ctx.createBuffer(1,n,e.sr), ch=buf.getChannelData(0);
+  for(let i=0;i<n;i++){let v=bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8);if(v>=32768)v-=65536;ch[i]=v/32768}
+  const src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.destination);
+  nextT=Math.max(ctx.currentTime+0.02,nextT);src.start(nextT);nextT+=buf.duration;
+  playing.push(src);$('#bShut').style.display='';
+  src.onended=()=>{playing=playing.filter(x=>x!==src);if(!playing.length)$('#bShut').style.display='none'};
+}
+function stopAudio(){playing.forEach(s=>{try{s.stop()}catch{}});playing=[];nextT=0;$('#bShut').style.display='none'}
+$('#bUndo').onclick=async()=>{const r=await post('/api/undo');add(esc(r.report.join('\n')),'sys');refresh()};
+$('#bReset').onclick=async()=>{await post('/api/reset');log.innerHTML='<div class="sys">Новый разговор.</div>'};
+$('#bVoice').onclick=async()=>{stopMic();const on=$('#bVoice').classList.contains('on');const r=await post('/api/voice/'+(on?'off':'on'));if(r.state)setVoice(r.state)};
+$('#bMic').onclick=async()=>{if(mic){stopMic();await post('/api/voice/off');setVoice('off')}else startMic()};
+
+// ── Микрофон браузера: захват → понижение до 16 кГц → int16 → /ws/audio ──
+let mic=null,audioId=null;
+async function startMic(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const src=ctx.createMediaStreamSource(stream), proc=ctx.createScriptProcessor(2048,1,1), ratio=ctx.sampleRate/16000;
+    const m={stream,ctx,proc,ws:null};
+    const open=()=>{if(mic!==m)return;m.ws=new WebSocket(`ws://${location.host}/ws/audio`);m.ws.binaryType='arraybuffer';m.ws.onmessage=x=>{try{const h=JSON.parse(x.data);if(h.type==='hello')audioId=h.id}catch{}};m.ws.onclose=()=>setTimeout(open,1500)};
+    proc.onaudioprocess=e=>{
+      if(!m.ws||m.ws.readyState!==1)return;
+      const f=e.inputBuffer.getChannelData(0), n=Math.floor(f.length/ratio), out=new Int16Array(n);
+      for(let i=0;i<n;i++){const a=Math.floor(i*ratio),b=Math.min(f.length,Math.floor((i+1)*ratio));let s=0;for(let j=a;j<b;j++)s+=f[j];const v=s/Math.max(1,b-a);out[i]=Math.max(-1,Math.min(1,v))*32767}
+      m.ws.send(out.buffer)};
+    src.connect(proc);proc.connect(ctx.destination);
+    mic=m;open();ensureOut();
+    if(ctx.state==='suspended'){
+      const show=()=>{$('#orb').className='orb need_click';$('#vstate').className='need_click';$('#vstate').textContent='нажми в любом месте — и я начну слушать'};
+      show();const iv=setInterval(()=>{if(ctx.state==='suspended')show();else clearInterval(iv)},1500);
+      const r=()=>{ctx.resume().then(()=>{$('#vstate').className='';setVoice(state.voice||'idle')});ensureOut();document.removeEventListener('click',r);document.removeEventListener('keydown',r)};
+      document.addEventListener('click',r);document.addEventListener('keydown',r)}
+    try{localStorage.setItem('jarvis_mic','1')}catch{}
+    $('#bMic').classList.add('on');$('#bMic').textContent='🎙 Браузер слушает';
+  }catch(err){add('⚠ Браузер не дал микрофон: '+esc(err.message),'sys')}
+}
+function stopMic(){if(!mic)return;const m=mic;mic=null;try{m.ws&&(m.ws.onclose=null,m.ws.close());m.proc.disconnect();m.stream.getTracks().forEach(t=>t.stop());m.ctx.close()}catch{}
+  try{localStorage.removeItem('jarvis_mic')}catch{}$('#bMic').classList.remove('on');$('#bMic').textContent='🎙 Микрофон браузера'}
+$('#bTts').onclick=async()=>{const r=await post('/api/voice/mute_tts');$('#bTts').textContent=r.tts?'🔊 Голос':'🔇 Без голоса'};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');tab=b.dataset.tab;render()});
+
+function render(){
+  const s=$('#side'); if(!state.tools){s.innerHTML='<div class="empty">Загрузка…</div>';return}
+  if(tab==='skills'){
+    const groups={};state.tools.forEach(t=>(groups[t.source]=groups[t.source]||[]).push(t));
+    const keys=Object.keys(groups).sort((a,b)=>(a==='core')-(b==='core'));
+    s.innerHTML=keys.map(k=>`<h5>${k==='core'?'Встроенные':'Навык '+esc(k.replace('skill:',''))}</h5>`+groups[k].map(t=>`<div class="row"><span class="dot ${t.risk}"></span><div><div class="n">${esc(t.name)}</div><div class="d">${esc(t.description)}</div></div></div>`).join('')).join('')
+      + (state.always_allow.length?`<h5>Всегда разрешено</h5><div class="d">${state.always_allow.map(esc).join(', ')}</div>`:'');
+  } else if(tab==='memory'){
+    s.innerHTML=state.facts.length?state.facts.map(f=>`<div class="row"><span class="d">#${f.id}</span><div>${esc(f.text)}</div></div>`).join(''):'<div class="empty">Пока ничего не запомнил. Скажи «запомни, что…»</div>';
+  } else if(tab==='journal'){
+    s.innerHTML=state.history.length?state.history.slice().reverse().map(r=>`<div class="row"><span class="d">${new Date(r.ts*1000).toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'})}</span><div><b>${esc(r.op)}</b> <span class="d">${esc((r.src||r.path||'').split(/[\\/]/).pop())}${r.dst?' → '+esc(r.dst):''}</span></div></div>`).join(''):'<div class="empty">Изменений файлов не было.</div>';
+  } else {
+    s.innerHTML=(state.git||'').split('\n').filter(Boolean).map(l=>{const [h,d,t,...m]=l.split(' ');return `<div class="row"><span class="n d">${esc(h)}</span><div>${esc(m.join(' '))}<div class="d">${esc(d+' '+t)}</div></div></div>`}).join('')||'<div class="empty">Нет истории.</div>';
+    s.innerHTML+=`<div style="margin-top:12px"><button id="bRestart">Перезапустить Jarvis</button></div>`;
+    $('#bRestart').onclick=()=>post('/api/restart');
+  }
+}
+async function refresh(){try{state=await (await fetch('/api/state')).json();if(state.tts_voice)$('#sVoice').value=state.tts_voice;setVoice(state.voice);$('#bTts').textContent=state.tts?'🔊 Голос':'🔇 Без голоса';setBusy(state.busy);render()}catch{}}
+
+function connect(){
+  const ws=new WebSocket(`ws://${location.host}/ws`);
+  ws.onmessage=m=>onEvent(JSON.parse(m.data));
+  ws.onopen=()=>refresh();
+  ws.onclose=()=>{add('Связь потеряна — переподключаюсь…','sys');setTimeout(connect,1500)};
+}
+refresh().then(()=>{(state.log||[]).forEach(e=>{if(['user','final','tool_start','tool_end','reminder'].includes(e.type))onEvent(e)}); if(state.pending)showConfirm({...state.pending,description:''});connect();
+  let want=false;try{want=localStorage.getItem('jarvis_mic')==='1'}catch{}
+  if(want||state.voice==='mic_error'||state.mic_source==='browser')startMic()});
+</script>
+</body>
+</html>
