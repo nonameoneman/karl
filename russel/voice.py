@@ -21,6 +21,34 @@ from . import lang as _lang
 _YES, _NO = _lang.YES, _lang.NO                 # «да/нет» на всех языках Рассела
 
 
+def _made_up(text: str) -> bool:
+    """Whisper на тишине и шуме «слышит» свою подсказку: «Голосовые команды», «Рассел, Рассел», «Рус, Рус, Рус».
+
+    Отбрасываем: кусок подсказки без других слов, одно слово три раза подряд, два и больше имён и ничего кроме."""
+    low = text.lower()
+    words = re.findall(r"[\wё-]+", low)
+    if not words:
+        return True
+    prompt = re.findall(r"[\wё-]+", _lang.info()["prompt"].lower())
+    if len(words) <= len(prompt) and " ".join(words) in " ".join(prompt) and len(words) > 1:
+        return True
+    if any(words[i] == words[i + 1] == words[i + 2] and words[i] not in _lang.YES + _lang.NO + _lang.STOP
+           for i in range(len(words) - 2)):
+        return True
+    names = {n.lower() for n in list(settings.wake_words) + _lang.ALL_NAMES}
+    return len(words) >= 2 and all(w in names for w in words)
+
+
+def strip_names(cmd: str) -> str:
+    """«Рассел, Рассел, открой загрузки» → «открой загрузки»; одни имена → пусто."""
+    names = {n.lower() for n in list(settings.wake_words) + _lang.ALL_NAMES}
+    while True:
+        m = re.match(r"^[\s,.!?—-]*([\wё-]+)[\s,.!?—-]*", cmd)
+        if not m or m.group(1).lower() not in names:
+            return cmd.strip(" ,.!?-—")
+        cmd = cmd[m.end():]
+
+
 _STOP_WORDS = _lang.STOP
 
 
@@ -299,8 +327,13 @@ class Listener:
     def _transcribe(self, audio: np.ndarray) -> str:
         segs, _ = self.model.transcribe(audio, language=_lang.cur(), beam_size=1, vad_filter=True,
                                         initial_prompt=_lang.info()["prompt"], condition_on_previous_text=False)
-        text = " ".join(s.text for s in segs if s.no_speech_prob < 0.7 and s.avg_logprob > -1.2).strip()
-        if any(h in text.lower() for h in _HALLUCINATIONS):
+        segs = [s for s in segs if s.no_speech_prob < 0.7 and s.avg_logprob > -1.2]
+        text = " ".join(s.text for s in segs).strip()
+        words = re.findall(r"[\wё-]+", text.lower())
+        names = {n.lower() for n in list(settings.wake_words) + _lang.ALL_NAMES}
+        if len(words) == 1 and words[0] in names and any(s.no_speech_prob > 0.3 or s.avg_logprob < -0.6 for s in segs):
+            return ""                    # одно имя без команды — частая выдумка на шуме: только если уверен
+        if any(h in text.lower() for h in _HALLUCINATIONS) or _made_up(text):
             return ""
         return text
 
@@ -352,7 +385,7 @@ class Listener:
                 return
         # 2) ключевое слово
         if wake:
-            cmd = text[wake[1]:].strip(" ,.!?-—")
+            cmd = strip_names(text[wake[1]:])
             bus.publish({"type": "heard", "text": text, "wake": True})
             if not cmd:
                 self.speaker.say("Слушаю.")

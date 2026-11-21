@@ -361,9 +361,12 @@ def search(query: str, k: int = 6, items: list[str] | None = None, extra_query: 
                 rows = []
         for r, (pid,) in enumerate(rows):
             ranks[pid] = ranks.get(pid, 0) + 1 / (60 + r)
-    qv = _embed([query])[0].astype(np.float32)
+    try:
+        qv = _embed([query])[0].astype(np.float32)
+    except Exception:                       # нет модели эмбеддингов в Ollama — ищем только по словам (FTS5)
+        qv = None
     scored = []
-    for it in scope:
+    for it in (scope if qv is not None else []):
         v = _vectors(it)
         if v is None or not len(v[0]):
             continue
