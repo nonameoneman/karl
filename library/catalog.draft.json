@@ -847,7 +847,7 @@
   "license": "Public domain",
   "redistributable": true,
   "verified": true,
-  "why": "Easiest format for Jarvis lookup by book:chapter:verse"
+  "why": "Easiest format for Russel lookup by book:chapter:verse"
  },
  {
   "id": "tanakh_hebrew_masoretic_usfm",
@@ -1918,7 +1918,7 @@
   "license": "CC BY-SA (WikDict, Wiktionary-derived)",
   "redistributable": true,
   "verified": true,
-  "why": "62k headwords, StarDict format usable by GoldenDict/Jarvis; SHA-512 in freedict-database.json"
+  "why": "62k headwords, StarDict format usable by GoldenDict/Russel; SHA-512 in freedict-database.json"
  },
  {
   "id": "freedict_rus_eng",

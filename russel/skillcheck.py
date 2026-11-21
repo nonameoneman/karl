@@ -1,4 +1,4 @@
-"""Проверка файла навыка из командной строки: python -m jarvis.skillcheck skills/_staging/name.py"""
+"""Проверка файла навыка из командной строки: python -m russel.skillcheck skills/_staging/name.py"""
 import sys
 from pathlib import Path
 

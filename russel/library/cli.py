@@ -1,4 +1,4 @@
-"""Загрузка библиотеки из консоли: python -m jarvis.library.cli get essential|full|core|<id> …   |   status"""
+"""Загрузка библиотеки из консоли: python -m russel.library.cli get essential|full|core|<id> …   |   status"""
 from __future__ import annotations
 
 import sys

@@ -1,4 +1,4 @@
-"""Настройки Jarvis. Переопределяются через data/settings.json."""
+"""Настройки Russel. Переопределяются через data/settings.json."""
 from __future__ import annotations
 
 import json
@@ -8,9 +8,9 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PKG = ROOT / "jarvis"
+PKG = ROOT / "russel"
 SKILLS_DIR = ROOT / "skills"
-DATA_DIR = Path(os.environ["JARVIS_DATA_DIR"]) if os.environ.get("JARVIS_DATA_DIR") else ROOT / "data"
+DATA_DIR = Path(os.environ["RUSSEL_DATA_DIR"]) if os.environ.get("RUSSEL_DATA_DIR") else ROOT / "data"
 MODELS_DIR = ROOT / "data" / "models"
 BACKUP_DIR = DATA_DIR / "backups"
 SETTINGS_FILE = DATA_DIR / "settings.json"
@@ -26,10 +26,10 @@ def _paths() -> dict:
 
 _P = _paths()
 _portable = ROOT.parent / "ollama" / "ollama.exe"          # портативная Ollama рядом с папкой проекта
-OLLAMA_EXE = Path(_P.get("ollama_exe") or os.environ.get("JARVIS_OLLAMA_EXE")
+OLLAMA_EXE = Path(_P.get("ollama_exe") or os.environ.get("RUSSEL_OLLAMA_EXE")
                   or (str(_portable) if _portable.exists() else shutil.which("ollama") or "ollama"))
 OLLAMA_MODELS = _P.get("ollama_models") or os.environ.get("OLLAMA_MODELS", "")  # пусто — папка Ollama по умолчанию
-LIBRARY_DIR = Path(_P.get("library") or os.environ.get("JARVIS_LIBRARY") or Path.home() / "KarlLibrary")
+LIBRARY_DIR = Path(_P.get("library") or os.environ.get("RUSSEL_LIBRARY") or Path.home() / "RusselLibrary")
 
 for _d in (SKILLS_DIR, DATA_DIR, BACKUP_DIR):
     _d.mkdir(parents=True, exist_ok=True)
@@ -46,9 +46,9 @@ class Settings:
     host: str = "127.0.0.1"
     port: int = 8765
     user_name: str = ""               # как обращаться к пользователю; пусто — без имени
-    assistant_name: str = "Карл"
+    assistant_name: str = "Рассел"
     wake_words: list[str] = field(default_factory=lambda: [
-        "карл", "karl", "carl", "корл"])
+        "рассел", "рас", "рус", "russel", "russell"])
     voice_enabled: bool = True
     voice_autostart: bool = True
     followup_seconds: int = 30        # сколько после ответа слушаю без обращения по имени

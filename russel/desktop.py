@@ -1,7 +1,7 @@
-"""Jarvis как обычная программа: своё окно (без браузера), значок у часов, один экземпляр.
+"""Russel как обычная программа: своё окно (без браузера), значок у часов, один экземпляр.
 
-Запуск: pythonw -m jarvis.desktop
-Окно — системный движок (Windows: WebView2, macOS: WKWebView). Ядро Jarvis работает отдельным процессом;
+Запуск: pythonw -m russel.desktop
+Окно — системный движок (Windows: WebView2, macOS: WKWebView). Ядро Russel работает отдельным процессом;
 окно его запускает, перезапускает после самообновления (код 3) и после сбоя.
 """
 from __future__ import annotations
@@ -39,7 +39,7 @@ def _alive() -> bool:
 
 
 class Core:
-    """Ядро Jarvis в отдельном процессе под присмотром."""
+    """Ядро Russel в отдельном процессе под присмотром."""
 
     def __init__(self) -> None:
         self.proc: subprocess.Popen | None = None
@@ -47,7 +47,7 @@ class Core:
         self.quitting = False
 
     def start(self) -> None:
-        if _alive():                       # уже запущено (например, из Jarvis.bat) — просто подключаемся
+        if _alive():                       # уже запущено (например, из Russel.bat) — просто подключаемся
             return
         self.owned = True
         threading.Thread(target=self._supervise, daemon=True, name="core").start()
@@ -57,10 +57,10 @@ class Core:
         if py.name.lower() == "pythonw.exe":
             py = py.with_name("python.exe")
         env = dict(os.environ, PYTHONUTF8="1")
-        log = (ROOT / "data").joinpath("jarvis.log")
+        log = (ROOT / "data").joinpath("russel.log")
         log.parent.mkdir(exist_ok=True)
         flags = subprocess.CREATE_NO_WINDOW if WIN else 0
-        return subprocess.Popen([str(py), "-m", "jarvis", "--no-browser"], cwd=ROOT, env=env,
+        return subprocess.Popen([str(py), "-m", "russel", "--no-browser"], cwd=ROOT, env=env,
                                 stdout=log.open("a", encoding="utf-8"), stderr=subprocess.STDOUT, creationflags=flags)
 
     def _supervise(self) -> None:
@@ -153,7 +153,7 @@ def _icon_image():
 
 
 def ensure_icon() -> Path:
-    ico = ROOT / "data" / "jarvis.ico"
+    ico = ROOT / "data" / "russel.ico"
     if not ico.exists():
         ico.parent.mkdir(exist_ok=True)
         _icon_image().save(ico, sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
@@ -175,7 +175,7 @@ def main() -> None:
         return
 
     _allow_microphone()
-    window = webview.create_window("Карл", html=SPLASH, width=480, height=780, min_size=(360, 520),
+    window = webview.create_window("Рассел", html=SPLASH, width=480, height=780, min_size=(360, 520),
                                    background_color="#07080C", text_select=True)
 
     def quit_all(*_):
@@ -189,12 +189,12 @@ def main() -> None:
         if state.get("quit") or not state["tray"]:
             core.stop()
             return True
-        window.hide()                      # крестик прячет в угол экрана — Jarvis продолжает слушать
+        window.hide()                      # крестик прячет в угол экрана — Russel продолжает слушать
         state["hidden"] = True
         if not state["told"]:
             state["told"] = True
             try:
-                state["tray"].notify("Я продолжаю слушать. Значок — у часов, внизу справа.", "Карл здесь")
+                state["tray"].notify("Я продолжаю слушать. Значок — у часов, внизу справа.", "Рассел здесь")
             except Exception:
                 pass
         return False
@@ -205,9 +205,9 @@ def main() -> None:
     if WIN:
         try:
             import pystray
-            menu = pystray.Menu(pystray.MenuItem("Открыть Карла", lambda *_: show(), default=True),
+            menu = pystray.Menu(pystray.MenuItem("Открыть Рассела", lambda *_: show(), default=True),
                                 pystray.MenuItem("Выйти", quit_all))
-            state["tray"] = pystray.Icon("jarvis", _icon_image(), "Карл", menu)
+            state["tray"] = pystray.Icon("russel", _icon_image(), "Рассел", menu)
             state["tray"].run_detached()
         except Exception:
             state["tray"] = None
@@ -218,7 +218,7 @@ def main() -> None:
         while not _alive():
             if time.time() - t0 > 180:
                 window.evaluate_js("document.getElementById('s').textContent="
-                                   "'Не получается запуститься. Подробности — в data/jarvis.log'")
+                                   "'Не получается запуститься. Подробности — в data/russel.log'")
                 return
             time.sleep(0.5)
         window.load_url(URL)

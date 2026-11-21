@@ -1,5 +1,5 @@
-// Анкета Карла: Mini-IPIP (Donnellan et al., 2006; IPIP — общественное достояние) и тексты профиля на всех языках.
-// Порядок ключей ITEMS совпадает с jarvis/profile.py.
+// Анкета Рассела: Mini-IPIP (Donnellan et al., 2006; IPIP — общественное достояние) и тексты профиля на всех языках.
+// Порядок ключей ITEMS совпадает с russel/profile.py.
 window.KNOW={
 ru:{
   consentT:'Хочешь, я буду понемногу узнавать тебя?',
@@ -21,7 +21,7 @@ ru:{
   adapt:{'E+':'Говорю живее, иногда шучу','E-':'Говорю спокойно, без лишней болтовни','A+':'Говорю мягко и тепло','A-':'Говорю прямо и по фактам',
     'C+':'Даю чёткие шаги по порядку','C-':'Разбиваю дела на шаги и предлагаю напоминания','N+':'Не драматизирую и всегда даю следующий шаг',
     'N-':'Говорю о рисках прямо','O+':'Предлагаю идеи и необычные варианты','O-':'Предлагаю проверенные, практичные способы'},
-  goalsH:'Цели',noGoals:'Целей нет. Скажи, например: «Карл, хочу выучить английский».',
+  goalsH:'Цели',noGoals:'Целей нет. Скажи, например: «Рассел, хочу выучить английский».',
   now:'Ответить на вопросы сейчас',forget:'Удалить всё обо мне',forgetQ:'Точно стереть анкету, стиль и цели?',off:'Анкета выключена.',on:'Включить анкету',
   act:{show_profile:'Открываю твой профиль',set_answer_style:'Запоминаю, как тебе удобнее',add_goal:'Записываю цель',remove_goal:'Убираю цель',forget_profile:'Стираю профиль'}},
 en:{
@@ -44,7 +44,7 @@ en:{
   adapt:{'E+':'I speak livelier and joke sometimes','E-':'I speak calmly, without small talk','A+':'I speak gently and warmly','A-':'I speak directly, to the facts',
     'C+':'I give clear steps in order','C-':'I break tasks into steps and offer reminders','N+':"I don't dramatize and always give a next step",
     'N-':'I talk about risks directly','O+':'I suggest ideas and unusual options','O-':'I suggest proven, practical ways'},
-  goalsH:'Goals',noGoals:'No goals yet. Say, for example: “Carl, I want to learn Spanish.”',
+  goalsH:'Goals',noGoals:'No goals yet. Say, for example: “Russel, I want to learn Spanish.”',
   now:'Answer questions now',forget:'Delete everything about me',forgetQ:'Erase the questionnaire, style and goals?',off:'The questionnaire is off.',on:'Turn it on',
   act:{show_profile:'Opening your profile',set_answer_style:'Noting how you prefer it',add_goal:'Saving the goal',remove_goal:'Removing the goal',forget_profile:'Erasing the profile'}},
 zh:{
@@ -67,7 +67,7 @@ zh:{
   adapt:{'E+':'说话更活泼，偶尔开玩笑','E-':'说话平静，不闲聊','A+':'说话温和亲切','A-':'说话直接，讲事实',
     'C+':'给出清楚的步骤','C-':'把事情拆成小步骤并提醒你','N+':'不夸大问题，总给出下一步',
     'N-':'直接谈风险','O+':'提出想法和新奇的选择','O-':'提供可靠、实用的方法'},
-  goalsH:'目标',noGoals:'还没有目标。可以说：“卡尔，我想学英语。”',
+  goalsH:'目标',noGoals:'还没有目标。可以说：“拉塞尔，我想学英语。”',
   now:'现在回答问题',forget:'删除关于我的一切',forgetQ:'确定删除问卷、风格和目标吗？',off:'问卷已关闭。',on:'开启问卷',
   act:{show_profile:'打开你的资料',set_answer_style:'记住你的偏好',add_goal:'记录目标',remove_goal:'移除目标',forget_profile:'删除资料'}},
 es:{
@@ -90,7 +90,7 @@ es:{
   adapt:{'E+':'Hablo con más chispa y a veces bromeo','E-':'Hablo con calma, sin charla de más','A+':'Hablo con suavidad y calidez','A-':'Hablo directo, a los hechos',
     'C+':'Doy pasos claros y en orden','C-':'Divido las tareas en pasos y ofrezco recordatorios','N+':'No dramatizo y siempre doy un siguiente paso',
     'N-':'Hablo de los riesgos sin rodeos','O+':'Propongo ideas y opciones originales','O-':'Propongo formas prácticas y probadas'},
-  goalsH:'Metas',noGoals:'Aún no hay metas. Di, por ejemplo: «Carl, quiero aprender inglés».',
+  goalsH:'Metas',noGoals:'Aún no hay metas. Di, por ejemplo: «Russel, quiero aprender inglés».',
   now:'Responder ahora',forget:'Borrar todo sobre mí',forgetQ:'¿Borrar el cuestionario, el estilo y las metas?',off:'El cuestionario está desactivado.',on:'Activarlo',
   act:{show_profile:'Abriendo tu perfil',set_answer_style:'Anotando cómo lo prefieres',add_goal:'Guardando la meta',remove_goal:'Quitando la meta',forget_profile:'Borrando el perfil'}},
 ar:{
@@ -113,7 +113,7 @@ ar:{
   adapt:{'E+':'أتحدث بحيوية وأمزح أحيانًا','E-':'أتحدث بهدوء ودون ثرثرة','A+':'أتحدث بلطف ودفء','A-':'أتحدث مباشرة وبالحقائق',
     'C+':'أعطي خطوات واضحة بالترتيب','C-':'أقسّم المهام إلى خطوات وأقترح تذكيرات','N+':'لا أهوّل الأمور وأعطي دائمًا الخطوة التالية',
     'N-':'أتحدث عن المخاطر مباشرة','O+':'أقترح أفكارًا وخيارات غير مألوفة','O-':'أقترح طرقًا عملية مجرّبة'},
-  goalsH:'الأهداف',noGoals:'لا أهداف بعد. قل مثلًا: «كارل، أريد أن أتعلّم الإنجليزية».',
+  goalsH:'الأهداف',noGoals:'لا أهداف بعد. قل مثلًا: «راسل، أريد أن أتعلّم الإنجليزية».',
   now:'أجب عن الأسئلة الآن',forget:'احذف كل شيء عنّي',forgetQ:'هل تريد حذف الاستبيان والأسلوب والأهداف؟',off:'الاستبيان متوقف.',on:'تشغيله',
   act:{show_profile:'أفتح ملفك',set_answer_style:'أسجّل ما تفضّله',add_goal:'أسجّل الهدف',remove_goal:'أزيل الهدف',forget_profile:'أحذف الملف'}},
 fr:{
@@ -136,7 +136,7 @@ fr:{
   adapt:{'E+':'Je parle avec plus d’entrain et plaisante parfois','E-':'Je parle calmement, sans bavardage','A+':'Je parle avec douceur et chaleur','A-':'Je vais droit au but, aux faits',
     'C+':'Je donne des étapes claires, dans l’ordre','C-':'Je découpe les tâches et propose des rappels','N+':'Je ne dramatise pas et donne toujours une prochaine étape',
     'N-':'Je parle des risques franchement','O+':'Je propose des idées et des options originales','O-':'Je propose des moyens pratiques et éprouvés'},
-  goalsH:'Objectifs',noGoals:'Pas encore d’objectif. Dis par exemple : « Carl, je veux apprendre l’anglais. »',
+  goalsH:'Objectifs',noGoals:'Pas encore d’objectif. Dis par exemple : « Russel, je veux apprendre l’anglais. »',
   now:'Répondre maintenant',forget:'Tout effacer à mon sujet',forgetQ:'Effacer le questionnaire, le style et les objectifs ?',off:'Le questionnaire est désactivé.',on:'L’activer',
   act:{show_profile:'J’ouvre ton profil',set_answer_style:'Je note ta préférence',add_goal:'J’enregistre l’objectif',remove_goal:'Je retire l’objectif',forget_profile:'J’efface le profil'}},
 hi:{
@@ -159,7 +159,7 @@ hi:{
   adapt:{'E+':'ज़िंदादिली से बात करता हूँ, कभी मज़ाक भी','E-':'शांति से, बिना फ़ालतू बातों के','A+':'नरमी और गर्मजोशी से','A-':'सीधे, तथ्यों के साथ',
     'C+':'क्रम से साफ़ कदम बताता हूँ','C-':'काम को छोटे कदमों में बाँटता हूँ और याद दिलाता हूँ','N+':'बात को बढ़ा-चढ़ाकर नहीं कहता, हमेशा अगला कदम बताता हूँ',
     'N-':'जोखिमों के बारे में सीधे बताता हूँ','O+':'नए विचार और अनोखे विकल्प सुझाता हूँ','O-':'आज़माए हुए व्यावहारिक तरीके सुझाता हूँ'},
-  goalsH:'लक्ष्य',noGoals:'अभी कोई लक्ष्य नहीं। कहिए, जैसे: “कार्ल, मैं अंग्रेज़ी सीखना चाहता हूँ।”',
+  goalsH:'लक्ष्य',noGoals:'अभी कोई लक्ष्य नहीं। कहिए, जैसे: “रसेल, मैं अंग्रेज़ी सीखना चाहता हूँ।”',
   now:'अभी सवालों के जवाब दें',forget:'मेरे बारे में सब मिटाएँ',forgetQ:'प्रश्नावली, शैली और लक्ष्य मिटा दें?',off:'प्रश्नावली बंद है।',on:'चालू करें',
   act:{show_profile:'आपकी प्रोफ़ाइल खोल रहा हूँ',set_answer_style:'आपकी पसंद याद रख रहा हूँ',add_goal:'लक्ष्य लिख रहा हूँ',remove_goal:'लक्ष्य हटा रहा हूँ',forget_profile:'प्रोफ़ाइल मिटा रहा हूँ'}},
 pt:{
@@ -182,7 +182,7 @@ pt:{
   adapt:{'E+':'Falo com mais animação e às vezes brinco','E-':'Falo com calma, sem conversa fiada','A+':'Falo com gentileza e carinho','A-':'Falo direto, com fatos',
     'C+':'Dou passos claros, em ordem','C-':'Divido as tarefas em passos e ofereço lembretes','N+':'Não dramatizo e sempre dou um próximo passo',
     'N-':'Falo dos riscos com franqueza','O+':'Sugiro ideias e opções diferentes','O-':'Sugiro jeitos práticos e testados'},
-  goalsH:'Metas',noGoals:'Ainda não há metas. Diga, por exemplo: “Carl, quero aprender inglês.”',
+  goalsH:'Metas',noGoals:'Ainda não há metas. Diga, por exemplo: “Russel, quero aprender inglês.”',
   now:'Responder agora',forget:'Apagar tudo sobre mim',forgetQ:'Apagar o questionário, o estilo e as metas?',off:'O questionário está desligado.',on:'Ligar',
   act:{show_profile:'Abrindo seu perfil',set_answer_style:'Anotando sua preferência',add_goal:'Salvando a meta',remove_goal:'Removendo a meta',forget_profile:'Apagando o perfil'}},
 };
@@ -202,6 +202,6 @@ window.KNOW['zh-Hant']=Object.assign({},window.KNOW.zh,{
   adaptH:'我如何調整',adaptNone:'現在我和所有人說話的方式一樣——回答幾個問題吧。',
   adapt:{'E+':'說話更活潑，偶爾開玩笑','E-':'說話平靜，不閒聊','A+':'說話溫和親切','A-':'說話直接，講事實','C+':'給出清楚的步驟','C-':'把事情拆成小步驟並提醒你',
     'N+':'不誇大問題，總給出下一步','N-':'直接談風險','O+':'提出想法和新奇的選擇','O-':'提供可靠、實用的方法'},
-  goalsH:'目標',noGoals:'還沒有目標。可以說：「卡爾，我想學英語。」',now:'現在回答問題',forget:'刪除關於我的一切',forgetQ:'確定刪除問卷、風格和目標嗎？',off:'問卷已關閉。',on:'開啟問卷',
+  goalsH:'目標',noGoals:'還沒有目標。可以說：「拉塞爾，我想學英語。」',now:'現在回答問題',forget:'刪除關於我的一切',forgetQ:'確定刪除問卷、風格和目標嗎？',off:'問卷已關閉。',on:'開啟問卷',
   act:{show_profile:'打開你的資料',set_answer_style:'記住你的偏好',add_goal:'記錄目標',remove_goal:'移除目標',forget_profile:'刪除資料'}});
 for(const c in window.KNOW)if(window.I18N&&window.I18N[c])Object.assign(window.I18N[c].act,window.KNOW[c].act);

@@ -1,4 +1,4 @@
-"""Голоса Piper для языков Карла: скачать с проверкой md5 из каталога rhasspy/piper-voices."""
+"""Голоса Piper для языков Рассела: скачать с проверкой md5 из каталога rhasspy/piper-voices."""
 from __future__ import annotations
 
 import hashlib
@@ -7,7 +7,7 @@ import httpx
 from .config import MODELS_DIR
 
 BASE = "https://huggingface.co/rhasspy/piper-voices/resolve/main/"
-# язык интерфейса → голос (мужской, под Карла)
+# язык интерфейса → голос (мужской, под Рассела)
 VOICES = {
     "ru": "ru_RU-dmitri-medium", "en": "en_GB-alan-medium", "zh": "zh_CN-chaowen-medium",
     "es": "es_ES-davefx-medium", "ar": "ar_JO-kareem-medium", "fr": "fr_FR-tom-medium",

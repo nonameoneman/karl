@@ -1,6 +1,6 @@
 """Реестр инструментов. Инструмент = функция с аннотациями + docstring + уровень риска.
 
-    from jarvis.tools import tool
+    from russel.tools import tool
 
     @tool(risk="green")
     def get_time() -> str:
@@ -104,7 +104,7 @@ def tool(risk: str = "green", name: str | None = None):
             params[p.name] = spec
         t = Tool(name or fn.__name__, fn, summary, params, required, risk, _current_source)
         REGISTRY[t.name] = t
-        fn.__jarvis_tool__ = t
+        fn.__russel_tool__ = t
         return fn
 
     return deco

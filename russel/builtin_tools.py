@@ -1,4 +1,4 @@
-"""Встроенные инструменты Jarvis."""
+"""Встроенные инструменты Russel."""
 from __future__ import annotations
 
 import ctypes
@@ -35,7 +35,7 @@ _ALIASES = {
 }
 
 
-_SANDBOX = os.environ.get("JARVIS_SANDBOX")
+_SANDBOX = os.environ.get("RUSSEL_SANDBOX")
 _SANDBOX_NAMES = {"downloads": "Downloads", "desktop": "Desktop", "documents": "Documents",
                   "pictures": "Pictures", "music": "Music", "videos": "Videos"}
 
@@ -285,7 +285,7 @@ def fetch_url(url: str, max_chars: int = 6000) -> str:
     """
     import httpx
     try:
-        r = httpx.get(url, follow_redirects=True, timeout=20, headers={"User-Agent": "Mozilla/5.0 Jarvis"})
+        r = httpx.get(url, follow_redirects=True, timeout=20, headers={"User-Agent": "Mozilla/5.0 Russel"})
     except Exception as e:
         return f"Не удалось открыть: {e}"
     t = r.text
@@ -411,7 +411,7 @@ def undo_last() -> str:
 
 @tool("green")
 def action_history(limit: int = 15) -> str:
-    """Последние изменения файлов, которые делал Jarvis.
+    """Последние изменения файлов, которые делал Russel.
 
     Args:
         limit: сколько записей
@@ -425,7 +425,7 @@ def action_history(limit: int = 15) -> str:
 
 @tool("red")
 def delete_files(paths: list[str]) -> str:
-    """Удалить файлы или папки (в корзину Jarvis — можно вернуть через undo_last).
+    """Удалить файлы или папки (в корзину Russel — можно вернуть через undo_last).
 
     Args:
         paths: список путей
@@ -713,7 +713,7 @@ def forget(fact_id: int) -> str:
 # ─── Самообновление ────────────────────────────────────────────────────────
 
 SKILL_TEMPLATE = '''"""Навык: <что делает>."""
-from jarvis.tools import tool
+from russel.tools import tool
 
 
 @tool("green")          # green — только чтение; yellow — меняет что-то обратимо; red — опасно
@@ -736,7 +736,7 @@ def test():                # необязательно: вызывается п
 
 @tool("green")
 def list_skills() -> str:
-    """Список всех инструментов Jarvis: встроенные и навыки, которые он написал сам."""
+    """Список всех инструментов Russel: встроенные и навыки, которые он написал сам."""
     by_src: dict[str, list[str]] = {}
     for t in tools.REGISTRY.values():
         by_src.setdefault(t.source, []).append(f"{t.name}[{t.risk}]")
@@ -751,7 +751,7 @@ def create_skill(name: str, code: str) -> str:
 
     Args:
         name: имя навыка латиницей (weather, currency_rates)
-        code: полный код модуля. Шаблон: from jarvis.tools import tool; @tool("green") def f(arg: str) -> str: \"\"\"описание\"\"\" ...; функция test() — проверка
+        code: полный код модуля. Шаблон: from russel.tools import tool; @tool("green") def f(arg: str) -> str: \"\"\"описание\"\"\" ...; функция test() — проверка
     """
     return selfupdate.install_skill(name, code)
 
@@ -784,7 +784,7 @@ def delete_skill(name: str) -> str:
 
 @tool("green")
 def list_own_code() -> str:
-    """Файлы исходного кода самого Jarvis (для самоулучшения)."""
+    """Файлы исходного кода самого Russel (для самоулучшения)."""
     files = [p.relative_to(ROOT).as_posix() for p in ROOT.rglob("*")
              if p.is_file() and p.suffix in (".py", ".html", ".md", ".ps1")
              and not any(x in p.parts for x in ("data", "__pycache__", ".git", "_staging"))]
@@ -796,7 +796,7 @@ def read_own_code(path: str, start_line: int = 1, max_lines: int = 200) -> str:
     """Прочитать свой исходный файл с номерами строк.
 
     Args:
-        path: путь относительно корня проекта, например jarvis/agent.py
+        path: путь относительно корня проекта, например russel/agent.py
         start_line: с какой строки
         max_lines: сколько строк
     """
@@ -811,7 +811,7 @@ def read_own_code(path: str, start_line: int = 1, max_lines: int = 200) -> str:
 
 @tool("red")
 def edit_own_code(path: str, old: str, new: str, reason: str) -> str:
-    """Изменить собственный код Jarvis: заменить точный фрагмент old на new. Проверяет, что ядро импортируется,
+    """Изменить собственный код Russel: заменить точный фрагмент old на new. Проверяет, что ядро импортируется,
     иначе откатывает; при успехе — git-коммит. Новый файл: old пустой.
 
     Args:
@@ -825,7 +825,7 @@ def edit_own_code(path: str, old: str, new: str, reason: str) -> str:
 
 @tool("yellow")
 def restart_self() -> str:
-    """Перезапустить Jarvis, чтобы применились правки собственного кода."""
+    """Перезапустить Russel, чтобы применились правки собственного кода."""
     selfupdate.request_restart()
     return "Перезапущусь сразу после этого ответа."
 

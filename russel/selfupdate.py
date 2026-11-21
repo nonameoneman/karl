@@ -25,8 +25,8 @@ def git(*args: str) -> str:
 def ensure_repo() -> None:
     if not (ROOT / ".git").exists():
         git("init", "-q")
-        git("config", "user.name", "Jarvis")
-        git("config", "user.email", "jarvis@localhost")
+        git("config", "user.name", "Russel")
+        git("config", "user.email", "russel@localhost")
     gi = ROOT / ".gitignore"
     if not gi.exists():
         gi.write_text("data/\n__pycache__/\n*.pyc\nskills/_staging/\n", encoding="utf-8")
@@ -49,7 +49,7 @@ def load_skill(path: Path) -> list[str]:
     tools.remove_source(src)
     tools.set_source(src)
     try:
-        spec = importlib.util.spec_from_file_location(f"jarvis_skill_{path.stem}", path)
+        spec = importlib.util.spec_from_file_location(f"russel_skill_{path.stem}", path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
     finally:
@@ -72,7 +72,7 @@ def load_all_skills() -> dict[str, list[str] | str]:
 _VALIDATOR = textwrap.dedent("""
     import sys, json, importlib.util
     sys.path.insert(0, {root!r})
-    from jarvis import tools
+    from russel import tools
     tools.set_source("check")
     spec = importlib.util.spec_from_file_location("check_skill", {path!r})
     mod = importlib.util.module_from_spec(spec)
@@ -139,7 +139,7 @@ def install_skill(name: str, code: str) -> str:
 # ─── Правка собственного кода ───────────────────────────────────────────────
 
 def check_core() -> tuple[bool, str]:
-    r = subprocess.run([PY, "-c", "import jarvis.server; print('ok')"], cwd=ROOT,
+    r = subprocess.run([PY, "-c", "import russel.server; print('ok')"], cwd=ROOT,
                        capture_output=True, text=True, encoding="utf-8", timeout=120)
     return r.returncode == 0, (r.stderr or r.stdout)[-2500:]
 
@@ -147,7 +147,7 @@ def check_core() -> tuple[bool, str]:
 def edit_core(rel_path: str, old: str, new: str, reason: str) -> str:
     path = (ROOT / rel_path).resolve()
     if ROOT not in path.parents:
-        return "Можно править только файлы внутри проекта Jarvis."
+        return "Можно править только файлы внутри проекта Russel."
     if path.suffix not in (".py", ".html", ".md", ".json", ".ps1", ".txt", ".css", ".js"):
         return "Этот тип файла править нельзя."
     original = path.read_text(encoding="utf-8") if path.exists() else ""

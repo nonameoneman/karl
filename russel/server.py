@@ -1,4 +1,4 @@
-"""Веб-сервер Jarvis: UI на http://127.0.0.1:8765, WebSocket с событиями, REST для действий."""
+"""Веб-сервер Russel: UI на http://127.0.0.1:8765, WebSocket с событиями, REST для действий."""
 from __future__ import annotations
 
 import asyncio
@@ -15,7 +15,7 @@ from . import builtin_tools, bus, coder, journal, library, memory, power_tools, 
 from .agent import agent
 from .config import DATA_DIR, PKG, settings
 
-app = FastAPI(title="Jarvis")
+app = FastAPI(title="Russel")
 _clients: set[asyncio.Queue] = set()
 _loop: asyncio.AbstractEventLoop | None = None
 _log: list[dict] = []                     # последние события для новых вкладок

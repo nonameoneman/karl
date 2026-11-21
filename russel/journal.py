@@ -105,7 +105,7 @@ def mkdir(path: Path) -> None:
 
 
 def delete(path: Path) -> Path:
-    """Мягкое удаление: перенос в корзину Jarvis."""
+    """Мягкое удаление: перенос в корзину Russel."""
     path = Path(path)
     trash = BACKUP_DIR / "trash" / f"{uuid.uuid4().hex[:10]}_{path.name}"
     trash.parent.mkdir(parents=True, exist_ok=True)

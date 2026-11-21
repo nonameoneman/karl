@@ -1,4 +1,4 @@
-"""Сортировка по смыслу: Jarvis смотрит на имена, даты, начало текстов и содержимое картинок,
+"""Сортировка по смыслу: Russel смотрит на имена, даты, начало текстов и содержимое картинок,
 составляет план (какие файлы в какие папки), озвучивает его и применяет только после согласия."""
 from __future__ import annotations
 
@@ -166,7 +166,7 @@ def plan_sort(path: str, goal: str, only: str = "", look_at_images: bool = True)
     return _store_plan(root, entries, moves, why, existing)
 
 
-_GENERIC = {"jarvis", "json", "pdf", "png", "jpg", "svg", "zip", "txt", "csv", "xlsx", "mp4", "ok"}
+_GENERIC = {"russel", "json", "pdf", "png", "jpg", "svg", "zip", "txt", "csv", "xlsx", "mp4", "ok"}
 
 
 def _detect_only(goal: str) -> str:

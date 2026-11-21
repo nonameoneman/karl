@@ -1,4 +1,4 @@
-"""Запуск: python -m jarvis [--no-voice] [--no-browser]"""
+"""Запуск: python -m russel [--no-voice] [--no-browser]"""
 from __future__ import annotations
 
 import sys
@@ -13,12 +13,12 @@ from .config import settings
 
 def main() -> None:
     args = set(sys.argv[1:])
-    print("Jarvis: запускаю Ollama…", flush=True)
+    print("Russel: запускаю Ollama…", flush=True)
     llm.ensure_ollama()
 
     selfupdate.ensure_repo()
     loaded = selfupdate.load_all_skills()
-    print(f"Jarvis: навыки {loaded}", flush=True)
+    print(f"Russel: навыки {loaded}", flush=True)
     selfupdate.commit("auto: состояние при запуске")
 
     threading.Thread(target=builtin_tools.reminder_loop, daemon=True, name="reminders").start()
@@ -43,10 +43,10 @@ def main() -> None:
             if settings.voice_autostart:
                 server.listener.start()
         except Exception as e:
-            print(f"Jarvis: голос недоступен: {e}", flush=True)
+            print(f"Russel: голос недоступен: {e}", flush=True)
 
     url = f"http://{settings.host}:{settings.port}"
-    print(f"Jarvis: {url}", flush=True)
+    print(f"Russel: {url}", flush=True)
     if "--no-browser" not in args:
         threading.Timer(1.5, lambda: webbrowser.open(url)).start()
     uvicorn.run(server.app, host=settings.host, port=settings.port, log_level="warning")

@@ -5,7 +5,7 @@
 """
 import re
 
-from jarvis.tools import tool
+from russel.tools import tool
 
 API = "https://open.er-api.com/v6/latest/"     # Rates By Exchange Rate API — https://www.exchangerate-api.com
 
@@ -43,7 +43,7 @@ _COUNTRY.update({
 
 def home_currency() -> str:
     """Местная валюта по домашнему городу («Лос-Анджелес (US)» → USD); не знаем — USD."""
-    from jarvis.config import settings
+    from russel.config import settings
     m = re.search(r"\(([A-Z]{2})\)\s*$", settings.home_city or "")
     return _COUNTRY.get(m.group(1), "USD") if m else "USD"
 

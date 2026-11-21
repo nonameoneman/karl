@@ -292,7 +292,7 @@ def add_region(name: str, bbox, zmin: int = 11, zmax: int = 15, base: Path | Non
     meta = dict(bmeta, maxzoom=zmax, regions=regions)
     hdr = dict(bh, max_zoom=zmax)
     hb, root, cmeta, leaves = finalize_header(hdr, addressed, entries, contents, meta, True, bdata + pos)
-    out = out or MAPS_DIR / "carl_map.pmtiles"
+    out = out or MAPS_DIR / "world_map.pmtiles"
     tmp = out.with_suffix(".tmp")
     with tmp.open("wb") as f:
         for b in (hb, root, cmeta, leaves):

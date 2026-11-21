@@ -1019,7 +1019,7 @@
   "license": "Public domain",
   "redistributable": true,
   "verified": true,
-  "why": "Easiest format for Jarvis lookup by book:chapter:verse",
+  "why": "Easiest format for Russel lookup by book:chapter:verse",
   "short": "Библия, Синодальный перевод (VPL: verse ",
   "parser": null,
   "canon": false
@@ -2253,7 +2253,7 @@
   "license": "CC BY-SA (WikDict, Wiktionary-derived)",
   "redistributable": true,
   "verified": true,
-  "why": "62k headwords, StarDict format usable by GoldenDict/Jarvis; SHA-512 in freedict-database.json",
+  "why": "62k headwords, StarDict format usable by GoldenDict/Russel; SHA-512 in freedict-database.json",
   "short": "FreeDict English→Russian (WikDict, StarD",
   "checksum": "sha512:ffbfbbe9817dc9a2a84fb8556d99ba73b5bc572eab18f91988029adfc2a7917616dd20d13c94a99871857a047ce2a47a3538bde545f97065eb7e531d7a6ef4b4",
   "parser": "stardict",

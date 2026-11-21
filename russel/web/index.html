@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Карл — для продвинутых</title>
+<title>Рассел — для продвинутых</title>
 <style>
 :root{
   --bg:#0b0d10;--panel:#12151a;--line:#1f242c;--text:#e6e9ee;--dim:#8a93a0;--accent:#4fc3f7;
@@ -77,14 +77,14 @@ h5{margin:14px 0 4px;color:var(--dim);font-weight:600;font-size:11.5px;text-tran
 <body>
 <header>
   <div class="orb" id="orb"></div>
-  <h1>КАРЛ</h1>
+  <h1>РАССЕЛ</h1>
   <span id="vstate">—</span>
   <span class="sp"></span>
   <div class="meter" title="Уровень микрофона и порог речи"><i id="lvl"></i><b id="thr"></b></div>
   <button id="bMic" title="Слушать через микрофон браузера">🎙 Микрофон браузера</button>
   <button id="bVoice" title="Системный микрофон Windows">Системный</button>
   <button id="bShut" title="Замолчать (Esc)" style="display:none">⏹ Замолчи</button>
-  <select id="sVoice" title="Голос Jarvis">
+  <select id="sVoice" title="Голос Russel">
     <option value="dmitri">Дмитрий</option><option value="ruslan">Руслан</option>
     <option value="denis">Денис</option><option value="irina">Ирина</option>
   </select>
@@ -95,7 +95,7 @@ h5{margin:14px 0 4px;color:var(--dim);font-weight:600;font-size:11.5px;text-tran
 
 <main>
   <div id="chat"><div class="wrap" id="log">
-    <div class="sys">Скажи «Карл, …» или напиши ниже.</div>
+    <div class="sys">Скажи «Рассел, …» или напиши ниже.</div>
   </div></div>
   <form id="f"><div class="wrap">
     <textarea id="t" placeholder="Например: разложи Загрузки по типам" autofocus></textarea>
@@ -117,7 +117,7 @@ h5{margin:14px 0 4px;color:var(--dim);font-weight:600;font-size:11.5px;text-tran
 <script>
 const $=s=>document.querySelector(s), log=$('#log'), chat=$('#chat');
 let cur=null, state={}, tab='skills', busy=false;
-const VS={mic_error:'системный микрофон недоступен',off:'микрофон выключен',loading:'загружаю распознавание…',idle:'слушаю «Карл»',hearing:'слышу…',transcribing:'распознаю…'};
+const VS={mic_error:'системный микрофон недоступен',off:'микрофон выключен',loading:'загружаю распознавание…',idle:'слушаю «Рассел»',hearing:'слышу…',transcribing:'распознаю…'};
 const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const down=()=>chat.scrollTop=chat.scrollHeight;
 function add(html,cls){const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);down();return d}
@@ -166,7 +166,7 @@ $('#bShut').onclick=()=>{stopAudio();post('/api/shutup')};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){stopAudio();post('/api/shutup')}});
 $('#sVoice').onchange=()=>post('/api/tts',{voice:$('#sVoice').value});
 
-// ── Воспроизведение ответов: в браузере, чтобы эхоподавление вычитало голос Jarvis из микрофона ──
+// ── Воспроизведение ответов: в браузере, чтобы эхоподавление вычитало голос Russel из микрофона ──
 let outCtx=null, nextT=0, playing=[];
 function ensureOut(){if(!outCtx)outCtx=new (window.AudioContext||window.webkitAudioContext)();if(outCtx.state==='suspended')outCtx.resume();return outCtx}
 function playChunk(e){
@@ -204,12 +204,12 @@ async function startMic(){
       show();const iv=setInterval(()=>{if(ctx.state==='suspended')show();else clearInterval(iv)},1500);
       const r=()=>{ctx.resume().then(()=>{$('#vstate').className='';setVoice(state.voice||'idle')});ensureOut();document.removeEventListener('click',r);document.removeEventListener('keydown',r)};
       document.addEventListener('click',r);document.addEventListener('keydown',r)}
-    try{localStorage.setItem('jarvis_mic','1')}catch{}
+    try{localStorage.setItem('russel_mic','1')}catch{}
     $('#bMic').classList.add('on');$('#bMic').textContent='🎙 Браузер слушает';
   }catch(err){add('⚠ Браузер не дал микрофон: '+esc(err.message),'sys')}
 }
 function stopMic(){if(!mic)return;const m=mic;mic=null;try{m.ws&&(m.ws.onclose=null,m.ws.close());m.proc.disconnect();m.stream.getTracks().forEach(t=>t.stop());m.ctx.close()}catch{}
-  try{localStorage.removeItem('jarvis_mic')}catch{}$('#bMic').classList.remove('on');$('#bMic').textContent='🎙 Микрофон браузера'}
+  try{localStorage.removeItem('russel_mic')}catch{}$('#bMic').classList.remove('on');$('#bMic').textContent='🎙 Микрофон браузера'}
 $('#bTts').onclick=async()=>{const r=await post('/api/voice/mute_tts');$('#bTts').textContent=r.tts?'🔊 Голос':'🔇 Без голоса'};
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');tab=b.dataset.tab;render()});
 
@@ -226,7 +226,7 @@ function render(){
     s.innerHTML=state.history.length?state.history.slice().reverse().map(r=>`<div class="row"><span class="d">${new Date(r.ts*1000).toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'})}</span><div><b>${esc(r.op)}</b> <span class="d">${esc((r.src||r.path||'').split(/[\\/]/).pop())}${r.dst?' → '+esc(r.dst):''}</span></div></div>`).join(''):'<div class="empty">Изменений файлов не было.</div>';
   } else {
     s.innerHTML=(state.git||'').split('\n').filter(Boolean).map(l=>{const [h,d,t,...m]=l.split(' ');return `<div class="row"><span class="n d">${esc(h)}</span><div>${esc(m.join(' '))}<div class="d">${esc(d+' '+t)}</div></div></div>`}).join('')||'<div class="empty">Нет истории.</div>';
-    s.innerHTML+=`<div style="margin-top:12px"><button id="bRestart">Перезапустить Jarvis</button></div>`;
+    s.innerHTML+=`<div style="margin-top:12px"><button id="bRestart">Перезапустить Russel</button></div>`;
     $('#bRestart').onclick=()=>post('/api/restart');
   }
 }
@@ -239,7 +239,7 @@ function connect(){
   ws.onclose=()=>{add('Связь потеряна — переподключаюсь…','sys');setTimeout(connect,1500)};
 }
 refresh().then(()=>{(state.log||[]).forEach(e=>{if(['user','final','tool_start','tool_end','reminder'].includes(e.type))onEvent(e)}); if(state.pending)showConfirm({...state.pending,description:''});connect();
-  let want=false;try{want=localStorage.getItem('jarvis_mic')==='1'}catch{}
+  let want=false;try{want=localStorage.getItem('russel_mic')==='1'}catch{}
   if(want||state.voice==='mic_error'||state.mic_source==='browser')startMic()});
 </script>
 </body>

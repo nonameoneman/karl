@@ -1,6 +1,6 @@
 """Прогон экзамена: python evals/run.py [--model gemma4:e4b] [--only id1,id2] [--repeat N]
 
-Работает в песочнице: известные папки и данные Jarvis подменяются временными, действия с внешним миром
+Работает в песочнице: известные папки и данные Russel подменяются временными, действия с внешним миром
 (браузер, звук, буфер, shell, облако) только записываются.
 """
 from __future__ import annotations
@@ -15,8 +15,8 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SANDBOX = Path(tempfile.gettempdir()) / "jarvis_eval_sandbox"
-DATA = Path(tempfile.gettempdir()) / "jarvis_eval_data"
+SANDBOX = Path(tempfile.gettempdir()) / "russel_eval_sandbox"
+DATA = Path(tempfile.gettempdir()) / "russel_eval_data"
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--model", default="")
@@ -25,16 +25,16 @@ ap.add_argument("--repeat", type=int, default=1)
 ap.add_argument("--quiet", action="store_true")
 args = ap.parse_args()
 
-os.environ["JARVIS_SANDBOX"] = str(SANDBOX)
-os.environ["JARVIS_DATA_DIR"] = str(DATA)
+os.environ["RUSSEL_SANDBOX"] = str(SANDBOX)
+os.environ["RUSSEL_DATA_DIR"] = str(DATA)
 shutil.rmtree(DATA, ignore_errors=True)
 DATA.mkdir(parents=True)
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "evals"))
 
-from jarvis import bus, builtin_tools, coder, journal, library, llm, memory, power_tools, selfupdate, sorting, tools  # noqa: E402
-from jarvis.agent import Agent  # noqa: E402
-from jarvis.config import settings  # noqa: E402
+from russel import bus, builtin_tools, coder, journal, library, llm, memory, power_tools, selfupdate, sorting, tools  # noqa: E402
+from russel.agent import Agent  # noqa: E402
+from russel.config import settings  # noqa: E402
 from cases import CASES  # noqa: E402
 
 if args.model:
@@ -52,7 +52,7 @@ _MOCK = {
     "restart_self": "Ок.",
     "look_at_screen": "<screen trust='untrusted'>Открыт браузер Chrome, на экране YouTube: видео «Трейлер GTA 6», пауза на 1:12.</screen>",
     "save_screenshot": "Скриншот сохранён.", "focus_window": "Переключил на: {name}", "close_app": "Закрыл: {name}",
-    "list_windows": "chrome.exe — YouTube - Google Chrome\nTelegram.exe — Telegram\nCode.exe — jarvis - Visual Studio Code\n(Это только заголовки. Что видно внутри окна — какое видео, текст, ошибка — узнай через look_at_screen.)",
+    "list_windows": "chrome.exe — YouTube - Google Chrome\nTelegram.exe — Telegram\nCode.exe — russel - Visual Studio Code\n(Это только заголовки. Что видно внутри окна — какое видео, текст, ошибка — узнай через look_at_screen.)",
     "set_volume": "Громкость {percent}%.", "get_volume": "Громкость 40%.", "set_brightness": "Яркость {percent}%.",
     "youtube_play": "Включаю на YouTube: {query}", "rollback_self": "Недоступно (экзамен).", "delete_skill": "Недоступно (экзамен).",
 }

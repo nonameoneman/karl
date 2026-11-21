@@ -16,7 +16,7 @@ FRAME = 480                      # 30 мс
 _HALLUCINATIONS = ("субтитр", "продолжение следует", "редактор субтитров", "спасибо за просмотр",
                    "подписывайтесь", "dimatorzok", "amara.org")
 from . import lang as _lang
-_YES, _NO = _lang.YES, _lang.NO                 # «да/нет» на всех языках Карла
+_YES, _NO = _lang.YES, _lang.NO                 # «да/нет» на всех языках Рассела
 
 
 _STOP_WORDS = _lang.STOP
@@ -296,9 +296,9 @@ class Listener:
     def _route(self, text: str, during_tts: bool = False) -> None:
         low = text.lower().strip(" .,!?")
         words = re.findall(r"[\wё-]+", low)
-        wake = next((w for w in list(settings.wake_words) + _lang.ALL_NAMES if w in low[:40]), None)
+        wake = _lang.find_wake(text, settings.wake_words)
         stop = bool(words) and len(words) <= 3 and any(w in _STOP_WORDS for w in words)
-        # 0) перебивание: пока Jarvis говорит, реагируем только на имя и стоп-слова
+        # 0) перебивание: пока Russel говорит, реагируем только на имя и стоп-слова
         if during_tts or self.speaker.busy():
             if not (wake or stop):
                 bus.publish({"type": "overheard", "text": text, "during_tts": True})
@@ -322,7 +322,7 @@ class Listener:
                 return
         # 2) ключевое слово
         if wake:
-            cmd = text[low.find(wake) + len(wake):].strip(" ,.!?-—")
+            cmd = text[wake[1]:].strip(" ,.!?-—")
             bus.publish({"type": "heard", "text": text, "wake": True})
             if not cmd:
                 self.speaker.say("Слушаю.")
@@ -339,7 +339,7 @@ class Listener:
         bus.publish({"type": "overheard", "text": text})
 
     def open_followup(self, seconds: float | None = None) -> None:
-        """Окно «продолжения» отсчитывается от момента, когда Jarvis договорил."""
+        """Окно «продолжения» отсчитывается от момента, когда Russel договорил."""
         def _wait():
             time.sleep(0.5)
             while self.speaker.busy():

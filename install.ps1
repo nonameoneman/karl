@@ -1,4 +1,4 @@
-﻿# Установка Карла одной командой (Windows 10/11).
+﻿# Установка Рассела одной командой (Windows 10/11).
 #   powershell -ExecutionPolicy Bypass -File install.ps1             — всё нужное для разговора
 #   powershell -ExecutionPolicy Bypass -File install.ps1 -Library    — плюс офлайн-библиотека «Канон» (~20 ГБ)
 # Можно запускать повторно: уже установленное пропускается.
@@ -64,22 +64,22 @@ Ok "модели скачаны"
 # 5. Голоса (Piper, 8 языков) и, по желанию, офлайн-библиотека
 Step 5 "Голоса"
 $env:PYTHONUTF8 = "1"
-& $py -m jarvis.voices_get
-if ($Library) { & $py -m jarvis.library.cli get canon }
+& $py -m russel.voices_get
+if ($Library) { & $py -m russel.library.cli get canon }
 Ok "голоса на месте (Whisper для распознавания скачается при первом запуске)"
 
 # 6. Ярлык на рабочем столе
 Step 6 "Ярлык"
 if (-not $NoShortcut) {
-    $ico = & $py -c "from jarvis.desktop import ensure_icon; print(ensure_icon())"
+    $ico = & $py -c "from russel.desktop import ensure_icon; print(ensure_icon())"
     $lnk = (New-Object -ComObject WScript.Shell).CreateShortcut(
-        (Join-Path ([Environment]::GetFolderPath("Desktop")) "Карл.lnk"))
+        (Join-Path ([Environment]::GetFolderPath("Desktop")) "Рассел.lnk"))
     $lnk.TargetPath = Join-Path $root ".venv\Scripts\pythonw.exe"
-    $lnk.Arguments = "-m jarvis.desktop"
+    $lnk.Arguments = "-m russel.desktop"
     $lnk.WorkingDirectory = $root
     $lnk.IconLocation = $ico
     $lnk.Save()
-    Ok "ярлык «Карл» на рабочем столе"
+    Ok "ярлык «Рассел» на рабочем столе"
 }
 
-Write-Host "`nГотово. Запустите «Карл» с рабочего стола и скажите: «Карл, привет»." -ForegroundColor Green
+Write-Host "`nГотово. Запустите «Рассел» с рабочего стола и скажите: «Рассел, привет»." -ForegroundColor Green

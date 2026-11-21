@@ -1,4 +1,4 @@
-"""Живая проверка на настоящей системе через API работающего Jarvis (http://127.0.0.1:8765).
+"""Живая проверка на настоящей системе через API работающего Russel (http://127.0.0.1:8765).
 
 Только безопасные или обратимые действия; каждое изменение откатывается и проверяется.
 Запуск: python evals/live.py
@@ -16,7 +16,7 @@ import websockets
 
 API = "http://127.0.0.1:8765"
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from jarvis.builtin_tools import known_folder  # noqa: E402
+from russel.builtin_tools import known_folder  # noqa: E402
 
 DESK = known_folder("desktop")
 
@@ -72,8 +72,8 @@ async def main() -> None:
 
     # — папка + откат —
     before = snapshot(DESK)
-    r = await ask("Создай на рабочем столе папку Jarvis тест")
-    show("Создай на рабочем столе папку Jarvis тест", r, f"{'✅' if (DESK / 'Jarvis тест').is_dir() else '❌'} папка есть")
+    r = await ask("Создай на рабочем столе папку Russel тест")
+    show("Создай на рабочем столе папку Russel тест", r, f"{'✅' if (DESK / 'Russel тест').is_dir() else '❌'} папка есть")
     r = await ask("Верни как было")
     show("Верни как было", r, f"{'✅' if snapshot(DESK) == before else '❌'} рабочий стол как до теста")
 

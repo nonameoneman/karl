@@ -1,6 +1,6 @@
 """Хранилище библиотеки: файлы по хэшу (content-addressed), текущий манифест, загрузка с проверкой.
 
-<папка библиотеки>\\   — data/paths.json → library, по умолчанию ~/KarlLibrary
+<папка библиотеки>\\   — data/paths.json → library, по умолчанию ~/RusselLibrary
   blobs\\ab\\ab12…ef          — файлы по sha256 (один и тот же файл у всех узлов — один и тот же адрес)
   manifest.json             — принятый манифест (что есть в библиотеке)
   partial\\                  — недокачанное (докачка после обрыва)
@@ -79,7 +79,7 @@ def _upstream_checksum(url: str | None) -> tuple[str, str] | None:
     return {64: "sha256", 40: "sha1", 32: "md5"}[len(h)], h
 
 
-UA = "JarvisOfflineLibrary/1.0 (personal offline archive)"
+UA = "RusselOfflineLibrary/1.0 (personal offline archive)"
 
 
 def _ua(url: str) -> str:
@@ -88,7 +88,7 @@ def _ua(url: str) -> str:
         try:
             from ..config import settings
             if getattr(settings, "contact_email", ""):
-                return f"JarvisOfflineLibrary/1.0 (personal offline archive; {settings.contact_email})"
+                return f"RusselOfflineLibrary/1.0 (personal offline archive; {settings.contact_email})"
         except Exception:
             pass
     return UA

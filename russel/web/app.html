@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Карл</title>
+<title>Рассел</title>
 <style>
 :root{
   --bg:#07080c;--text:#eef1f6;--dim:#7d8594;--faint:#3a404c;--glass:rgba(255,255,255,.045);--edge:rgba(255,255,255,.08);
@@ -214,7 +214,7 @@ function applyLang(code){
   if(typeof paintStatus==='function')paintStatus();
 }
 async function chooseLang(code){
-  applyLang(code);try{localStorage.setItem('carl_lang',code)}catch{}
+  applyLang(code);try{localStorage.setItem('russel_lang',code)}catch{}
   await post('/api/lang',{lang:langInfo(code).speech});st.language=langInfo(code).speech;
 }
 function guessLang(){
@@ -328,7 +328,7 @@ $('#bNew').onclick=async()=>{await post('/api/reset');feed.innerHTML='';ex=null;
 $('#bPro').onclick=()=>location.href='/pro';
 $('#bMe').onclick=()=>{$('#sheet').classList.remove('show');openMe()};
 $('#bMeet').onclick=()=>{$('#sheet').classList.remove('show');playIntro()};
-function toggleMic(){micWanted=!micWanted;try{localStorage.setItem('jarvis_mute',micWanted?'0':'1')}catch{}
+function toggleMic(){micWanted=!micWanted;try{localStorage.setItem('russel_mute',micWanted?'0':'1')}catch{}
   $('#bMute').classList.toggle('off',!micWanted);$('#muteSlash').style.display=micWanted?'none':'';
   if(micWanted)startMic();else{stopMic();post('/api/voice/off')}paintStatus()}
 
@@ -385,7 +385,7 @@ async function openMe(){
 }
 $('#meSheet').onclick=e=>{if(e.target.id==='meSheet')$('#meSheet').classList.remove('show')};
 
-// ─── звук ответа (в окне — чтобы эхоподавление вычитало голос Jarvis из микрофона) ───
+// ─── звук ответа (в окне — чтобы эхоподавление вычитало голос Russel из микрофона) ───
 let outCtx=null,outGain=null,an=null,nextT=0,playing=[];
 function ensureOut(){if(!outCtx){outCtx=new (window.AudioContext||window.webkitAudioContext)();an=outCtx.createAnalyser();an.fftSize=512;an.connect(outCtx.destination)}
   if(outCtx.state==='suspended')outCtx.resume();return outCtx}
@@ -437,7 +437,7 @@ async function ensureMap(){
     await loadScript('/vendor/maplibre-gl/dist/maplibre-gl.js');await loadScript('/vendor/pmtiles/dist/pmtiles.js');await loadScript('/vendor/basemaps/dist/basemaps.js');
     const proto=new pmtiles.Protocol();maplibregl.addProtocol('pmtiles',proto.tile);
     const list=(await (await fetch('/api/maps')).json()).maps||[];
-    const world=list.includes('carl_map.pmtiles')?'carl_map.pmtiles':(list.find(n=>/^world_z\d+\.pmtiles$/.test(n))||list[0]);
+    const world=list.includes('world_map.pmtiles')?'world_map.pmtiles':(list.find(n=>/^world_z\d+\.pmtiles$/.test(n))||list[0]);
     const o=location.origin;
     map=new maplibregl.Map({container:'mapBox',attributionControl:{compact:true},maxZoom:17,
       style:{version:8,glyphs:o+'/vendor/basemaps-assets/fonts/{fontstack}/{range}.pbf',sprite:o+'/vendor/basemaps-assets/sprites/v4/dark',
@@ -502,7 +502,7 @@ function frame(){
   requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 
-// ─── связь с Jarvis ───
+// ─── связь с Russel ───
 async function refresh(){try{st=await (await fetch('/api/state')).json();voice=st.voice;setBusy(st.busy);return true}catch{return false}}
 function connect(){
   const ws=new WebSocket(`ws://${location.host}/ws`);
@@ -510,22 +510,22 @@ function connect(){
   ws.onopen=()=>{wsOk=true;refresh().then(paintStatus)};
   ws.onclose=()=>{wsOk=false;paintStatus();setTimeout(connect,1500)};
 }
-try{applyLang(localStorage.getItem('carl_lang')||'ru')}catch{applyLang('ru')}
+try{applyLang(localStorage.getItem('russel_lang')||'ru')}catch{applyLang('ru')}
 (async()=>{
   while(!(await refresh()))await new Promise(r=>setTimeout(r,800));
   const log=(st.log||[]).filter(e=>['user','final'].includes(e.type)).slice(-6);
   log.forEach(onEvent);feed.querySelectorAll('.ex').forEach(x=>x.classList.add('old'));
   if(st.pending)confirmCard({...st.pending});
   connect();
-  try{micWanted=localStorage.getItem('jarvis_mute')!=='1'}catch{}
+  try{micWanted=localStorage.getItem('russel_mute')!=='1'}catch{}
   $('#bMute').classList.toggle('off',!micWanted);$('#muteSlash').style.display=micWanted?'none':'';
   if(micWanted)startMic();
-  let saved=null,met=false;try{saved=localStorage.getItem('carl_lang');met=localStorage.getItem('carl_met')==='1'}catch{}
+  let saved=null,met=false;try{saved=localStorage.getItem('russel_lang');met=localStorage.getItem('russel_met')==='1'}catch{}
   if(!saved){await pickLang();met=false}
   if(!met||location.hash==='#intro')playIntro();
 })();
 
-// ─── знакомство: четыре слова собираются в КАРЛ ───
+// ─── знакомство: шесть слов собираются в РАССЕЛ ───
 function playIntro(){
   const box=$('#intro'),words=box.querySelector('.words'),target=box.querySelector('.target');
   box.className='';box.style.display='flex';words.innerHTML='';target.innerHTML='';box.querySelectorAll('.fly').forEach(x=>x.remove());
@@ -540,7 +540,7 @@ function playIntro(){
     box.querySelectorAll('.fly').forEach((f,i)=>{const r=f.getBoundingClientRect();f.style.transition='transform .9s cubic-bezier(.6,0,.3,1),opacity .9s ease';
       f.style.transitionDelay=(i*40)+'ms';f.style.transform=`translate(${ox-r.width*.06}px,${oy-r.height*.06}px) scale(.12)`;f.style.opacity='0'});
     box.classList.add('out');
-    setTimeout(()=>{box.style.display='none';box.className=''},950);try{localStorage.setItem('carl_met','1')}catch{}};
+    setTimeout(()=>{box.style.display='none';box.className=''},950);try{localStorage.setItem('russel_met','1')}catch{}};
   box.onclick=finish;
   [...words.children].forEach((d,i)=>at(250+i*380,()=>{[...d.children].forEach((s,j)=>s.style.transitionDelay=(j*28)+'ms');d.classList.add('in')}));
   at(2000,()=>{words.querySelectorAll('span').forEach(s=>s.style.transitionDelay='0ms');box.classList.add('lit')});
