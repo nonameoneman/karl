@@ -1,7 +1,11 @@
-"""Инструменты Рассела для офлайн-карт: найти рядом, показать на карте, запомнить «мой город»."""
+"""Инструменты Рассела для карт: найти рядом, маршрут, показать на карте, запомнить «мой город»."""
 from __future__ import annotations
 
 import math
+import urllib.parse
+import webbrowser
+
+import httpx
 
 from .. import bus
 from ..config import settings
@@ -64,6 +68,62 @@ def find_places(what: str, where: str = "", limit: int = 5) -> str:
                      f"{_bearing(lat, lon, f['lat'], f['lon'])}")
     lines.append("Данные: Overture Maps (офлайн-копия); часы работы и наличие товаров не известны.")
     return "\n".join(lines)
+
+
+def _online() -> bool:
+    try:
+        return httpx.head("https://www.google.com/maps", timeout=2.5).status_code < 500
+    except Exception:
+        return False
+
+
+@tool("green")
+def route(to: str, start: str = "") -> str:
+    """Маршрут: «построй маршрут до больницы», «как доехать до травмпункта от улицы Мира 1», «дорога до вокзала».
+    Находит ближайшее подходящее место (или место по названию). С интернетом открывает маршрут в Google Maps
+    от адреса пользователя; без интернета показывает место на офлайн-карте с расстоянием и направлением.
+
+    Args:
+        to: куда — тип места («больница», «травмпункт», «аптека») или название
+        start: откуда — адрес или место; пусто — дом пользователя
+    """
+    home = _where("")
+    origin = places.geocode(start) if start.strip() else home
+    base = origin or home                     # улиц в офлайн-справочнике нет — ищем от города пользователя
+    kind = places.kind_of(to)
+    dest = None
+    if base and places.DB.exists():
+        found = places.nearby(base[0], base[1], kind=kind, name="" if kind else to, limit=3)
+        if found:
+            dest = found[0]
+    if dest is None and not kind:
+        g = places.geocode(to)
+        if g:
+            dest = {"name": g[2], "lat": g[0], "lon": g[1], "kind": "", "km": 0, "locality": ""}
+    if dest is None:
+        return f"Не нашёл, куда строить маршрут: {to}."
+    online = _online()
+    if online:
+        if start.strip():
+            o = start if origin or not settings.home_city else f"{start}, {settings.home_city.split(' (')[0]}"
+        elif home:
+            o = f"{home[0]},{home[1]}"
+        else:
+            o = ""
+        url = ("https://www.google.com/maps/dir/?api=1&travelmode=driving"
+               + (f"&origin={urllib.parse.quote(o)}" if o else "")
+               + f"&destination={dest['lat']},{dest['lon']}")
+        webbrowser.open(url)
+    if base:
+        bus.publish({"type": "map", "center": [base[0], base[1]], "label": base[2],
+                     "points": [{"name": dest["name"], "lat": dest["lat"], "lon": dest["lon"],
+                                 "kind": dest["kind"], "km": dest.get("km", 0)}]})
+    near = (f" — {_dist(dest['km'])}, {_bearing(base[0], base[1], dest['lat'], dest['lon'])} центра «{base[2]}»"
+            if base and dest.get("km") else "")
+    if online:
+        return f"Открыл маршрут в Google Maps до «{dest['name']}»{near}. Время в пути и пробки — там."
+    return (f"Без интернета дорожный маршрут не построю. Ближайшее: «{dest['name']}»{near}; показал на офлайн-карте. "
+            "Если есть интернет — скажи ещё раз, открою маршрут.")
 
 
 @tool("green")
