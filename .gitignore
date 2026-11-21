@@ -19,3 +19,4 @@ evals/results/
 *.zim
 *.npy
 .claude/
+PLAN.md
