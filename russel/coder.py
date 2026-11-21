@@ -18,7 +18,9 @@ CHECK = f"{PY} -m russel.skillcheck"
 
 
 def available() -> bool:
-    return shutil.which("claude") is not None
+    """Внешний программист (Claude Code CLI) — только если установлен и не выключен в настройках."""
+    from .config import settings
+    return settings.external_coder and shutil.which("claude") is not None
 
 
 def _run_claude(prompt: str, allowed: list[str], timeout: int = 900) -> str:

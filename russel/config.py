@@ -57,6 +57,7 @@ class Settings:
     tts_voice: str = "dmitri"         # dmitri | ruslan | denis | irina (Piper)
     tts_speed: float = 0.85           # length_scale: меньше — быстрее
     max_steps: int = 12
+    external_coder: bool = True       # можно ли отдавать большие задачи внешнему программисту (Claude Code CLI)
     always_allow: list[str] = field(default_factory=list)   # инструменты 🟡 без подтверждения
     contact_email: str = ""           # контакт для User-Agent там, где сервис его требует (Wikimedia)
     language: str = "ru"              # язык интерфейса и разговора: ru en zh es ar fr hi pt
