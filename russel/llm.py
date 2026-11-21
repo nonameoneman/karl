@@ -21,8 +21,30 @@ def ollama_alive() -> bool:
         return False
 
 
+def resolve_model() -> str:
+    """Если в запущенной Ollama нет модели из настроек — взять ближайшую того же семейства (только в памяти).
+
+    Бывает, когда Ollama уже запущена кем-то другим с иной папкой моделей: там gemma4:latest вместо gemma4:e4b.
+    """
+    try:
+        names = [m["name"] for m in httpx.get("http://127.0.0.1:11434/api/tags", timeout=5).json().get("models", [])]
+    except Exception:
+        return settings.model
+    want = settings.model if ":" in settings.model else settings.model + ":latest"
+    if not names or want in names:
+        return settings.model
+    family = want.split(":")[0]
+    chat = [n for n in names if not any(k in n for k in ("embed", "bge", "minilm"))]
+    same = [n for n in chat if n.split(":")[0] == family]
+    pick = (family + ":latest" if family + ":latest" in same else None) or (same or chat or names)[0]
+    print(f"Russel: модели {settings.model} нет в Ollama, беру {pick}", flush=True)
+    settings.model = pick                          # без save(): в настройках остаётся выбор пользователя
+    return pick
+
+
 def ensure_ollama() -> None:
     if ollama_alive():
+        resolve_model()
         return
     env = dict(os.environ, OLLAMA_HOST="127.0.0.1:11434", OLLAMA_KEEP_ALIVE="30m", OLLAMA_FLASH_ATTENTION="1")
     if OLLAMA_MODELS:
@@ -31,6 +53,7 @@ def ensure_ollama() -> None:
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     for _ in range(60):
         if ollama_alive():
+            resolve_model()
             return
         time.sleep(0.5)
     raise RuntimeError("Ollama не запустилась")

@@ -1,10 +1,12 @@
 """Голос: микрофон → энергетический VAD → Whisper → ключевое слово «Рассел» → агент → ответ голосом (Piper)."""
 from __future__ import annotations
 
+import os
 import queue
 import re
 import threading
 import time
+from pathlib import Path
 
 import numpy as np
 
@@ -50,6 +52,23 @@ def _clean_for_speech(text: str) -> str:
          .replace("МБ", " мегабайт").replace("°C", " градусов")
     t = re.sub(r"(?<!\d)(\d{1,2}:\d{2}|\d+[.,]\d+|\d+)(?!\d)", _num_words, t)
     return re.sub(r"\s+", " ", t).strip()
+
+
+def _add_cuda_dlls() -> None:
+    """Где искать cuBLAS для Whisper (CTranslate2, CUDA 12): pip-пакеты nvidia, CUDA Toolkit, библиотеки Ollama."""
+    import sys
+    from .config import OLLAMA_EXE
+    cands = [Path(sys.prefix) / "Lib" / "site-packages" / "nvidia" / n / "bin" for n in ("cublas", "cudnn", "cuda_runtime")]
+    if os.environ.get("CUDA_PATH"):
+        cands.append(Path(os.environ["CUDA_PATH"]) / "bin")
+    cands.append(Path(OLLAMA_EXE).parent / "lib" / "ollama" / "cuda_v12")
+    for d in cands:
+        if d.is_dir():
+            try:
+                os.add_dll_directory(str(d))
+            except (OSError, AttributeError):
+                pass
+            os.environ["PATH"] = str(d) + os.pathsep + os.environ.get("PATH", "")
 
 
 class Speaker:
@@ -175,10 +194,21 @@ class Listener:
             self._load_model(WhisperModel)
 
     def _load_model(self, WhisperModel) -> None:
-        try:
-            self.model = WhisperModel(settings.whisper_model, device=settings.whisper_device, compute_type="int8_float16")
-        except Exception:
-            self.model = WhisperModel(settings.whisper_model, device="cpu", compute_type="int8")
+        """Whisper на видеокарте, если она реально распознаёт; иначе — на процессоре.
+
+        Модель на CUDA создаётся без ошибок, даже когда нет cublas64_12.dll, а падает только на первом распознавании —
+        тогда голос молча не работал. Поэтому: подключаем найденные библиотеки CUDA и делаем пробный прогон."""
+        if settings.whisper_device == "cuda":
+            _add_cuda_dlls()
+            try:
+                m = WhisperModel(settings.whisper_model, device="cuda", compute_type="int8_float16")
+                list(m.transcribe(np.zeros(16000, np.float32), language="ru")[0])
+                self.model = m
+                return
+            except Exception as e:
+                bus.publish({"type": "error", "text": f"Распознавание на видеокарте недоступно ({e}) — работаю на процессоре, "
+                                                      "будет медленнее."})
+        self.model = WhisperModel(settings.whisper_model, device="cpu", compute_type="int8")
 
     def start(self, source: str = "system") -> None:
         """source: system — микрофон через Windows; browser — звук приходит из веб-страницы (feed)."""
