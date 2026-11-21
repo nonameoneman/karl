@@ -51,7 +51,7 @@ class Settings:
         "рассел", "рас", "рус", "russel", "russell"])
     voice_enabled: bool = True
     voice_autostart: bool = True
-    followup_seconds: int = 30        # сколько после ответа слушаю без обращения по имени
+    followup_seconds: int = 10        # сколько после ответа слушаю без обращения по имени
     whisper_model: str = "large-v3-turbo"
     whisper_device: str = "cuda"
     tts_voice: str = "dmitri"         # dmitri | ruslan | denis | irina (Piper)

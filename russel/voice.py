@@ -200,6 +200,7 @@ class Listener:
         self.model = None
         self.enabled = False
         self.follow_until = 0.0          # окно продолжения разговора без ключевого слова
+        self.follow_left = 0             # сколько ответов подряд ещё можно без имени (потом — снова по имени)
         self.audio_q: queue.Queue[np.ndarray] = queue.Queue()
         self.state = "off"
         self.source = "system"
@@ -392,11 +393,15 @@ class Listener:
                 self.follow_until = time.time() + 9
                 return
             self.follow_until = 0
+            self.follow_left = 2
             self.on_command(cmd)
             return
-        # 3) продолжение разговора без ключевого слова
+        # 3) продолжение разговора без ключевого слова: недолго и не больше двух реплик подряд,
+        #    иначе Рассел отвечает на разговоры людей вокруг («Аж на дорогу ставим»)
         if time.time() < self.follow_until and (len(words) >= 2 or (words and words[0] in _YES + _NO)):
             bus.publish({"type": "heard", "text": text})
+            self.follow_until = 0
+            self.follow_left -= 1
             self.on_command(text)
             return
         bus.publish({"type": "overheard", "text": text})
@@ -407,5 +412,6 @@ class Listener:
             time.sleep(0.5)
             while self.speaker.busy():
                 time.sleep(0.1)
-            self.follow_until = time.time() + (seconds or settings.followup_seconds)
+            if self.follow_left > 0:
+                self.follow_until = time.time() + (seconds or settings.followup_seconds)
         threading.Thread(target=_wait, daemon=True).start()
